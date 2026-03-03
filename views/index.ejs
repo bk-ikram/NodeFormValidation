@@ -7,10 +7,18 @@
 <body>
   <h1><%= title %></h1>
   <!-- In views/index.ejs -->
+  <form action="/search" method="GET">
+    <h2>Find a user</h2>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email">
+    <button type="submit">Search</button>
+  </form>
   <ul>
     <% if (locals.users) {%>
       <% users.forEach(function(user) { %>
-        <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %></li>
+        <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %> Email: <%= user.email %> Age: <%= user.age %> Biography:<%= user.bio %></li>
         <a href="/<%= user.id %>/update">Update</a>
         <!-- This time we're sending a POST request to our route, so we need a form. -->
         <form action="/<%= user.id %>/delete" method="POST" style="display:inline;">

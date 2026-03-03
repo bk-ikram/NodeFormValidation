@@ -13,6 +13,12 @@ const validateUser = [
   body("lastName").trim()
     .isAlpha().withMessage(`Last name ${alphaErr}`)
     .isLength({ min: 1, max: 10 }).withMessage(`Last name ${lengthErr}`),
+  body("email").trim()
+    .isEmail().withMessage(`Has to be a valid email.`),
+  body("age").trim()
+    .isNumeric({ min: 18, max: 120 }).withMessage(`Age must be between 18 and 120`),
+  body("bio").trim()
+    .isLength({ max: 200 }).withMessage(`Biography must not exceed 200 characters.`),
 ];
 
 exports.usersListGet = (req, res) => {
@@ -39,8 +45,8 @@ exports.usersCreatePost = [
         errors: errors.array(),
       });
     }
-    const { firstName, lastName } = matchedData(req);
-    usersStorage.addUser({ firstName, lastName });
+    const { firstName, lastName, email, age, bio } = matchedData(req);
+    usersStorage.addUser({ firstName, lastName, email, age, bio });
     res.redirect("/");
   }
 ];
@@ -65,8 +71,8 @@ exports.usersUpdatePost = [
         errors: errors.array(),
       });
     }
-    const { firstName, lastName } = matchedData(req);
-    usersStorage.updateUser(req.params.id, { firstName, lastName });
+    const { firstName, lastName, email, age, bio } = matchedData(req);
+    usersStorage.updateUser(req.params.id, { firstName, lastName, email, age, bio });
     res.redirect("/");
   }
 ];
@@ -75,4 +81,13 @@ exports.usersUpdatePost = [
 exports.usersDeletePost = (req, res) => {
   usersStorage.deleteUser(req.params.id);
   res.redirect("/");
+};
+
+exports.usersSearchGet = (req, res) => {
+  const [ name, email] = [req.query.name, req.query.email];
+  const users = usersStorage.findUsers(name,email);
+  res.render("search", {
+    title: "Search Results",
+    users: users,
+  });
 };
